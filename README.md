@@ -11,6 +11,9 @@
 | Breadboard                    | 1      | N/A   |
 | MicroSD Card with GNU / Linux | 1      | N/A   |
 
+Screenshot:
+![Preview](img/Screenshot.JPG)
+
 Software
 -   Raspbian https://www.raspberrypi.org/downloads/
 -   Raspberry Pi Cross Compiler https://github.com/raspberrypi/tools
