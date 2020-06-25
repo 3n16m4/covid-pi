@@ -1,0 +1,47 @@
+# Created by .ignore support plugin (hsz.mobi)
+### C++ template
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.app
+
+# Compiled Python files
+*.pyc
+
+CMakeLists.txt.user
+cmake-build-*
+build/
+
+# other stuff
+.vscode/
+.idea/
+venv/
+.DS_Store
+/.vs
+*.swp
