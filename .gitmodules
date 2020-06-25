@@ -1,0 +1,6 @@
+[submodule "third_party/WiringPi"]
+	path = third_party/WiringPi
+	url = git@github.com:WiringPi/WiringPi.git
+[submodule "third_party/--force"]
+	path = third_party/--force
+	url = git@github.com:WiringPi/WiringPi.git
