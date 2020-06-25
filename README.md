@@ -23,6 +23,7 @@ Software
     -   WiringPi http://wiringpi.com/reference/i2c-library/
     -   cxxopts https://github.com/jarro2783/cxxopts
     -   rapidjson https://github.com/Tencent/rapidjson
+    -   fmt https://github.com/fmtlib/fmt
 
 set 1000 kbit/s boadrate for Raspberry Pi 3b+
 ```bash
