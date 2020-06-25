@@ -194,7 +194,7 @@ class covid_status_handler final {
             page->dead = dead;
             page->recovered = recovered;
         }
-        std::sort(std::begin(pages), std::end(pages), std::move(sort_fun_));
+        std::sort(std::begin(pages), std::end(pages), sort_fun_);
         {
             // put input handler thread to sleep until data from mainthread is
             // ready.
