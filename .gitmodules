@@ -4,3 +4,6 @@
 [submodule "third_party/curl"]
 	path = third_party/curl
 	url = git@github.com:curl/curl.git
+[submodule "cxxopts"]
+	path = cxxopts
+	url = git@github.com:jarro2783/cxxopts.git

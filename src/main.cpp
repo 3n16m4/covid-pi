@@ -10,30 +10,17 @@
 #include <cstring>
 #include <unistd.h>
 
+#include <functional>
 #include <future>
 #include <mutex>
+#include <string_view>
 
 #include <curl/curl.h>
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
+#include <cxxopts.hpp>
 
 using namespace std::literals::chrono_literals;
-
-/*void *operator new(std::size_t count) {
-    std::printf("Allocating %zu bytes of memory\n", count);
-    return std::malloc(count);
-}
-
-void operator delete(void *ptr) noexcept {
-    std::printf("Freeing pointer %p\n", ptr);
-    std::free(ptr);
-}*/
-
-// TODO: copy chunks to buffer
-static size_t write_cb(char *data, size_t n, size_t l, void *userp) {
-    reinterpret_cast<std::string *>(userp)->append(data, n * l);
-    return n * l;
-}
 
 // clang-format off
 enum APIType : std::uint8_t { 
@@ -44,13 +31,19 @@ enum APIType : std::uint8_t {
 
 class covid_status_handler final {
   public:
+    using SortFunction = std::function<bool(io::menu::page_type const &,
+                                            io::menu::page_type const &)>;
+
     static constexpr std::array<char const *, 2> apis{
         "https://www.trackcorona.live/api/countries",
         "https://www.trackcorona.live/api/cities"};
 
     explicit covid_status_handler(io::menu &menu,
-                                  io::input_handler &input_handler)
-        : menu_(menu), input_handler_(input_handler) {
+                                  io::input_handler &input_handler,
+                                  std::string_view country,
+                                  SortFunction &&sort_fun)
+        : menu_(menu), input_handler_(input_handler), country_(country),
+          sort_fun_(std::move(sort_fun)) {
         curl_global_init(CURL_GLOBAL_ALL);
         handle_ = curl_easy_init();
         // pre-allocate 40KB
@@ -99,7 +92,7 @@ class covid_status_handler final {
      *  @return True if successful, otherwise false.
      */
     [[nodiscard]] bool request() noexcept {
-        CURLcode const res = curl_easy_perform(handle_);
+        auto const res = curl_easy_perform(handle_);
         if (res != CURLE_OK) {
             fmt::print(stderr, "curl_easy_perform() failed: {}\n",
                        curl_easy_strerror(res));
@@ -116,7 +109,7 @@ class covid_status_handler final {
         json_data_.clear();
         auto task = std::async(std::launch::async, [this]() -> bool {
             assert(handle_ && "curl handle is NULL!\n");
-            CURLcode const res = curl_easy_perform(handle_);
+            auto const res = curl_easy_perform(handle_);
             if (res != CURLE_OK) {
                 fmt::print(stderr, "curl_easy_perform() failed: {}\n",
                            curl_easy_strerror(res));
@@ -168,7 +161,7 @@ class covid_status_handler final {
         using namespace rapidjson;
 
         Document d;
-        ParseResult ok = d.Parse(json_data_.c_str());
+        ParseResult const ok = d.Parse(json_data_.c_str());
         if (!ok) {
             fmt::print(stderr, "JSON parse error: {} ({})",
                        GetParseError_En(ok.Code()), ok.Offset());
@@ -180,10 +173,14 @@ class covid_status_handler final {
 
         // move data from json document into covid_status vector
         for (auto &&e : d["data"].GetArray()) {
-            auto page = std::make_unique<covid_data>();
+            auto &&page = pages.emplace_back(std::make_unique<covid_data>());
 
             auto &&loc = e["location"].Move().GetString();
             auto &&code = e["country_code"].Move().GetString();
+
+            // TODO: filter country here
+
+            using namespace utils;
             auto const &confirmed =
                 json_default_val<std::int32_t>(e["confirmed"], 0);
             auto const &dead = json_default_val<std::int32_t>(e["dead"], 0);
@@ -196,10 +193,8 @@ class covid_status_handler final {
             page->confirmed = confirmed;
             page->dead = dead;
             page->recovered = recovered;
-
-            pages.emplace_back(std::move(page));
         }
-
+        std::sort(std::begin(pages), std::end(pages), std::move(sort_fun_));
         {
             // put input handler thread to sleep until data from mainthread is
             // ready.
@@ -222,26 +217,92 @@ class covid_status_handler final {
 
     io::menu &menu_;
     io::input_handler &input_handler_;
+
+    std::string_view country_;
+    SortFunction sort_fun_;
 };
 
-int main() {
+int main(int argc, char *argv[]) {
+    static_assert(
+        utils::alpha_2_codes.max_size() == 676,
+        "Alpha-2-Codes list size does not match official specification!");
+
+    // default arguments
+    APIType api_mode{APIType::Countries};
+    std::string_view country{"all"};
+    covid_status_handler::SortFunction sort_fun =
+        [](auto &&lhs, auto &&rhs) noexcept -> bool {
+        return lhs->confirmed > rhs->confirmed;
+    };
+
+    // parse optional command line arguments
+    try {
+        cxxopts::Options options(argv[0], "a covid-19 live tracker.");
+
+        // clang-format off
+        options.add_options()
+            ("h, help", "Print usage")
+            ("c, country", "Filter by country and show its cities", cxxopts::value<std::string>(), "alpha-2 code")
+            ("s, sort", "Sort by confirmed cases.", cxxopts::value<std::string>(), "low / high")
+        ;
+        // clang-format on
+        auto const result = options.parse(argc, argv);
+        if (result.count("help")) {
+            fmt::print(options.help());
+            return EXIT_SUCCESS;
+        }
+        if (result.count("country")) {
+            api_mode = APIType::Cities;
+            auto const &res = result["country"].as<std::string>();
+            if (res.size() != 2) {
+                fmt::print(
+                    stderr,
+                    "Invalid alpha-2 country code! See "
+                    "https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\n");
+                return EXIT_SUCCESS;
+            } else {
+                country = res;
+            }
+        }
+        if (result.count("sort")) {
+            auto const order = result["sort"].as<std::string>();
+            if (order == "low") {
+                sort_fun = [](auto &&lhs, auto &&rhs) noexcept -> bool {
+                    return lhs->confirmed < rhs->confirmed;
+                };
+            } else if (order == "high") {
+                sort_fun = [](auto &&lhs, auto &&rhs) noexcept -> bool {
+                    return lhs->confirmed > rhs->confirmed;
+                };
+            } else {
+                fmt::print(
+                    stderr,
+                    "Invalid sort order. Available options: low, high\n");
+                return EXIT_SUCCESS;
+            }
+        }
+    } catch (cxxopts::OptionException const &e) {
+        fmt::print(stderr, "Error parsing options: {}\n", e.what());
+        return EXIT_FAILURE;
+    }
+
     // Setup wiringPi and the i2c interface
     if (!oled_display::setup(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS)) {
         return EXIT_FAILURE;
     }
     // Install signal handler
     if (std::signal(SIGINT, [](int signal) {
-            // cleanup code here...
             oled_display::cleanup();
             std::exit(signal);
         }) == SIG_ERR) {
         return EXIT_FAILURE;
     }
 
+    constexpr std::string_view loading_text{"Loading..."};
     // clear display splashscreen
     oled_display::clear_buffer();
     oled_display::set_text_size(2);
-    oled_display::display(0, io::MenuRow::ROW3, "Loading...");
+    oled_display::display(0, io::MenuRow::ROW3, loading_text);
     oled_display::set_text_size(1);
 
     // initialize io
@@ -252,11 +313,12 @@ int main() {
 
     // initialize menu
     io::menu menu{};
-    io::input_handler io_handler{menu};
-    io_handler.start();
+    io::input_handler input_handler{menu};
+    input_handler.start();
 
-    covid_status_handler status_handler{menu, io_handler};
-    status_handler.set_mode(APIType::Countries);
+    covid_status_handler status_handler{menu, input_handler, country,
+                                        std::move(sort_fun)};
+    status_handler.set_mode(api_mode);
     if (!status_handler.setup()) {
         fmt::print(stderr, "curl setup failed!\n");
         return EXIT_FAILURE;
@@ -264,27 +326,21 @@ int main() {
     // 60 seconds request timeout
     status_handler.set_timeout(60L);
 
+    constexpr auto next_request_time = 20min;
     bool done{false};
-
     while (!done) {
         // perform the async request
         if (!status_handler.async_request()) {
             done = false;
             break;
-        } else {
-            // ok!
-            fmt::print("async_request() finished\n");
-            // wake up worker thread
-            std::puts("lock_guard");
-            std::puts("notify_one");
         }
         // perform next request after 20 minutes
-        std::this_thread::sleep_for(10s);
+        std::this_thread::sleep_for(next_request_time);
     }
 
     // wait for the io thread to finish
-    io_handler.request_interrupt();
-    io_handler.wait();
+    input_handler.request_interrupt();
+    input_handler.wait();
 
     oled_display::cleanup();
 

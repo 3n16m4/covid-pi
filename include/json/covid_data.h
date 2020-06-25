@@ -53,14 +53,6 @@ struct covid_data final {
     std::int32_t confirmed{};
     std::int32_t dead{};
     std::int32_t recovered{};
-
-    constexpr bool operator<(covid_data const &rhs) const noexcept {
-        return confirmed < rhs.confirmed;
-    }
-
-    constexpr bool operator>(covid_data const &rhs) const noexcept {
-        return confirmed > rhs.confirmed;
-    }
 };
 
 #endif // COVID_PI_COVID_DATA_H

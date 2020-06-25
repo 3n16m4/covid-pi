@@ -93,12 +93,16 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(fmt EXCLUDE_FROM_ALL)
 add_subdirectory(rapidjson)
+add_subdirectory(cxxopts)
 
 include_directories(rapidjson/include)
+include_directories(cxxopts/include)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
+        project_options
+        #project_warnings
         fmt::fmt-header-only
         ${CURL_LIB}
         ${CRYPTO_LIB}

@@ -8,7 +8,7 @@ extern "C" {
 #include "ssd1306_i2c/ssd1306_i2c.h"
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
-};
+}
 
 #include <string_view>
 #include <cstdint>
@@ -18,7 +18,7 @@ struct oled_display final {
     /// \param vcc_state default should be SSD1306_SWITCHCAPVCC
     /// \param i2c_addr default should be SSD1306_I2C_ADDRESS
     /// \return true if hardware got initialized successfully, otherwise false.
-    [[nodiscard]] static bool setup(std::uintptr_t vcc_state, std::uintptr_t i2c_addr) noexcept;
+    [[nodiscard]] static bool setup(std::uintptr_t vcc_state, std::int32_t i2c_addr) noexcept;
 
     /// Turns the display off
     static void cleanup() noexcept;

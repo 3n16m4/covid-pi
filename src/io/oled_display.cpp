@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cstring>
 
-bool oled_display::setup(std::uintptr_t vcc_state, std::uintptr_t i2c_addr) noexcept {
+bool oled_display::setup(std::uintptr_t vcc_state, std::int32_t i2c_addr) noexcept {
     if (wiringPiSetup() != 0) {
         std::fprintf(stderr, "Unable to setup wiringPi: %s\n", strerror(errno));
         return false;

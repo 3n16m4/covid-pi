@@ -15,20 +15,6 @@
 
 #include <rapidjson/document.h>
 
-/*
- * consists of
- * -    main_menu:
- *         Country: <name>/<code>
- *         Confirmed: <int64>
- *         Dead: <int64>
- *         Recovered: <int64>
- *
- *         #### n / m Page ####
- *      *
- * -    menu_page
- *
- */
-
 namespace io {
     enum MenuRow : std::uint8_t {
         ROW1 = 1 * 8,
@@ -48,7 +34,6 @@ namespace io {
 
         void add_menu(pages_type &&pages) noexcept {
             pages_ = std::move(pages);
-            sort();
             render();
         }
 
@@ -107,7 +92,7 @@ namespace io {
 
         /// Returns the current immutable page.
         /// Thread-Safe: No
-        [[nodiscard]] covid_data *const current() const noexcept {
+        [[nodiscard]] covid_data const *current() const noexcept {
             return pages_[index_].get();
         }
 
@@ -115,15 +100,6 @@ namespace io {
         /// Thread-Safe: No
         [[nodiscard]] covid_data *current() noexcept {
             return pages_[index_].get();
-        }
-
-      private:
-        // TODO
-        /// Sort the underlying array by a certain criteria.
-        void sort() {
-            // sort by case counts
-            /*std::sort(std::begin(pages_), std::end(pages_),
-                      std::greater<covid_data>());*/
         }
 
       private:

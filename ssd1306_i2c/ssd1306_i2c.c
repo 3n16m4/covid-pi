@@ -44,7 +44,7 @@ int cursor_y = 0;
 int cursor_x = 0;
 
 // the memory buffer for the LCD. Displays Adafruit logo
-int buffer[SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8] = {
+unsigned int buffer[SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -140,19 +140,19 @@ void ssd1306_drawPixel(int x, int y, unsigned int color) {
     // x is which column
     switch (color) {
         case WHITE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] |= (1 << (y & 7));
+            buffer[x + (y / 8) * SSD1306_LCDWIDTH] |= (1u << ((unsigned int)y & 7u));
             break;
         case BLACK:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
+            buffer[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1u << ((unsigned int)y & 7u));
             break;
         case INVERSE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1 << (y & 7));
+            buffer[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1u << ((unsigned int)y & 7u));
             break;
     }
 }
 
 // Init SSD1306
-int ssd1306_begin(unsigned int vccstate, unsigned int i2caddr) {
+int ssd1306_begin(unsigned int vccstate, int i2caddr) {
     // I2C Init
 
     _vccstate = vccstate;
@@ -236,9 +236,9 @@ void ssd1306_invertDisplay(unsigned int i) {
     }
 }
 
-void ssd1306_command(unsigned int c) {
+void ssd1306_command(int c) {
     // I2C
-    unsigned int control = 0x00; // Co = 0, D/C = 0
+    int const control = 0x00; // Co = 0, D/C = 0
     wiringPiI2CWriteReg8(i2cd, control, c);
 }
 
@@ -263,7 +263,7 @@ void ssd1306_display(void) {
     // I2C
     int i;
     for (i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++) {
-        wiringPiI2CWriteReg8(i2cd, 0x40, buffer[i]);
+        wiringPiI2CWriteReg8(i2cd, 0x40, (int)buffer[i]);
         // This sends byte by byte.
         // Better to send all buffer without 0x40 first
         // Should be optimized
@@ -274,7 +274,7 @@ void ssd1306_display(void) {
 // Activate a right handed scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // ssd1306_scrollright(0x00, 0x0F)
-void ssd1306_startscrollright(unsigned int start, unsigned int stop) {
+void ssd1306_startscrollright(int start, int stop) {
     ssd1306_command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
     ssd1306_command(0X00);
     ssd1306_command(start);
@@ -289,7 +289,7 @@ void ssd1306_startscrollright(unsigned int start, unsigned int stop) {
 // Activate a right handed scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // ssd1306_scrollright(0x00, 0x0F)
-void ssd1306_startscrollleft(unsigned int start, unsigned int stop) {
+void ssd1306_startscrollleft(int start, int stop) {
     ssd1306_command(SSD1306_LEFT_HORIZONTAL_SCROLL);
     ssd1306_command(0X00);
     ssd1306_command(start);
@@ -304,7 +304,7 @@ void ssd1306_startscrollleft(unsigned int start, unsigned int stop) {
 // Activate a diagonal scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // ssd1306_scrollright(0x00, 0x0F)
-void ssd1306_startscrolldiagright(unsigned int start, unsigned int stop) {
+void ssd1306_startscrolldiagright(int start, int stop) {
     ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
     ssd1306_command(0X00);
     ssd1306_command(SSD1306_LCDHEIGHT);
@@ -321,7 +321,7 @@ void ssd1306_startscrolldiagright(unsigned int start, unsigned int stop) {
 // Activate a diagonal scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // ssd1306_scrollright(0x00, 0x0F)
-void ssd1306_startscrolldiagleft(unsigned int start, unsigned int stop) {
+void ssd1306_startscrolldiagleft(int start, int stop) {
     ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
     ssd1306_command(0X00);
     ssd1306_command(SSD1306_LCDHEIGHT);
@@ -342,7 +342,7 @@ void ssd1306_stopscroll(void) {
 // dim = true: display is dimmed
 // dim = false: display is normal
 void ssd1306_dim(unsigned int dim) {
-    unsigned int contrast;
+    int contrast;
 
     if (dim) {
         contrast = 0; // Dimmed display
@@ -391,7 +391,7 @@ void ssd1306_drawFastHLineInternal(int x, int y, int w, unsigned int color) {
     // and offset x columns in
     pBuf += x;
 
-    unsigned int mask = 1 << (y & 7);
+    unsigned int mask = 1u << ((unsigned int)y & 7u);
 
     switch (color) {
         case WHITE:
@@ -435,8 +435,8 @@ void ssd1306_drawFastVLineInternal(int x, int __y, int __h, unsigned int color) 
     }
     // this display doesn't need ints for coordinates, use local byte
     // registers for faster juggling
-    unsigned int y = __y;
-    unsigned int h = __h;
+    int y = __y;
+    int h = __h;
 
     // set up the pointer for fast movement through the buffer
     unsigned int *pBuf = buffer;
@@ -447,7 +447,7 @@ void ssd1306_drawFastVLineInternal(int x, int __y, int __h, unsigned int color) 
 
     // do the first partial byte, if necessary - this requires some
     // masking
-    unsigned int mod = (y & 7);
+    unsigned int mod = ((unsigned int)y & 7u);
     if (mod) {
         // mask off the high n bits we want to set
         mod = 8 - mod;
@@ -460,8 +460,8 @@ void ssd1306_drawFastVLineInternal(int x, int __y, int __h, unsigned int color) 
 
         // adjust the mask if we're not going to reach the end of this
         // byte
-        if (h < mod) {
-            mask &= (0XFF >> (mod - h));
+        if ((unsigned int)h < mod) {
+            mask &= (0xffu >> (mod - (unsigned int)h));
         }
 
         switch (color) {
@@ -477,11 +477,11 @@ void ssd1306_drawFastVLineInternal(int x, int __y, int __h, unsigned int color) 
         }
 
         // fast exit if we're done here!
-        if (h < mod) {
+        if ((unsigned int)h < mod) {
             return;
         }
 
-        h -= mod;
+        h -= (int)mod;
 
         pBuf += SSD1306_LCDWIDTH;
     }
@@ -613,7 +613,7 @@ void ssd1306_drawFastVLine(int x, int y, int h, unsigned int color) {
     }
 }
 
-void ssd1306_fillRect(int x, int y, int w, int h, int fillcolor) {
+void ssd1306_fillRect(int x, int y, int w, int h, unsigned int fillcolor) {
     // Bounds check
     if ((x >= WIDTH) || (y >= HEIGHT))
         return;
@@ -653,7 +653,7 @@ void ssd1306_setTextSize(int s) {
     textsize = (s > 0) ? s : 1;
 }
 
-void ssd1306_write(int c) {
+void ssd1306_write(unsigned char c) {
     if (c == '\n') {
         cursor_y += textsize * 8;
         cursor_x = 0;
@@ -670,14 +670,14 @@ void ssd1306_write(int c) {
 }
 
 void ssd1306_drawString(char const *str) {
-    int i;
+    size_t i;
     size_t const end = strlen(str);
     for (i = 0; i < end; i++)
         ssd1306_write(str[i]);
 }
 
 void ssd1306_drawText(int x, int y, char const *str) {
-    int i;
+    size_t i;
     size_t const end = strlen(str);
     int point_x = x;
     int point_y = y;
@@ -699,7 +699,7 @@ void ssd1306_drawText(int x, int y, char const *str) {
 }
 
 // Draw a character
-void ssd1306_drawChar(int x, int y, unsigned char c, int color, int size) {
+void ssd1306_drawChar(int x, int y, unsigned char c, unsigned int color, int size) {
     if ((x >= WIDTH) ||             // Clip right
         (y >= HEIGHT) ||            // Clip bottom
         ((x + 6 * size - 1) < 0) || // Clip left
