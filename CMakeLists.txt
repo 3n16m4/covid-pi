@@ -62,7 +62,7 @@ set(SOURCE_FILES
 
 set (WPI_PATH third_party/WiringPi/wiringPi)
 include_directories (include ${WPI_PATH})
-find_library(WPI_LIB wiringPi HINTS ${WPI_PATH} NO_CMAKE_FIND_ROOT_PATH)
+find_library(WPI_LIB wiringPi HINTS libs NO_CMAKE_FIND_ROOT_PATH)
 if(NOT WPI_LIB)
     message(FATAL_ERROR "wiringPi library not found")
 endif()

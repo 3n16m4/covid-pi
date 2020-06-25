@@ -36,7 +36,7 @@
 
 CMakeLists.txt.user
 cmake-build-*
-build/
+build*/
 
 # other stuff
 .vscode/
