@@ -1,0 +1,7 @@
+<map id="io::oled_display::clear" name="io::oled_display::clear">
+<area shape="rect" id="node2" href="$structio_1_1oled__display.html#a551dd0aaaf33d4cf5a545dd71e5cbbbe" title="Clears the internal display buffer. " alt="" coords="205,5,353,47"/>
+<area shape="rect" id="node4" href="$structio_1_1oled__display.html#aa9d33da4a0aaa3324e5ea5e703a8ee7e" title="Renders the internal display buffer. " alt="" coords="201,71,357,98"/>
+<area shape="rect" id="node3" href="$ssd1306__i2c_8c.html#a4f4ce98e1364e9461cc7a1e812c3cd97" title="ssd1306_clearDisplay" alt="" coords="405,13,556,39"/>
+<area shape="rect" id="node5" href="$ssd1306__i2c_8c.html#af34c9d57224961a13f625ea3a774c65a" title="ssd1306_display" alt="" coords="421,71,540,98"/>
+<area shape="rect" id="node6" href="$ssd1306__i2c_8c.html#adf4674c5cf4fb086141d47614cb01319" title="ssd1306_command" alt="" coords="604,71,739,98"/>
+</map>

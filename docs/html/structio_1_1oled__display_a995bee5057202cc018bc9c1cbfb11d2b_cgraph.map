@@ -1,0 +1,3 @@
+<map id="io::oled_display::set_text_size" name="io::oled_display::set_text_size">
+<area shape="rect" id="node2" href="$ssd1306__i2c_8c.html#a95c7f1cd96299d04febe6adaefa4baeb" title="ssd1306_setTextSize" alt="" coords="192,13,340,39"/>
+</map>

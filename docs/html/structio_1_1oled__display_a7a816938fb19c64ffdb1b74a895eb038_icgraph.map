@@ -1,0 +1,6 @@
+<map id="io::oled_display::write" name="io::oled_display::write">
+<area shape="rect" id="node2" href="$structio_1_1oled__display.html#af9c477a20ffe38ac393b18765413f5c6" title="Writes and renders the internal display buffer. " alt="" coords="201,56,363,83"/>
+<area shape="rect" id="node3" href="$classio_1_1menu.html#a5321b7f9157c4882d1eefb7d5092c222" title="Renders the current page to the OLED display. " alt="" coords="411,5,527,32"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="443,56,494,83"/>
+<area shape="rect" id="node4" href="$classio_1_1input__handler.html#a683fa07ffb8bf356800f7e0d5c4abf38" title="Waits for the input thread to finish. " alt="" coords="575,5,724,32"/>
+</map>

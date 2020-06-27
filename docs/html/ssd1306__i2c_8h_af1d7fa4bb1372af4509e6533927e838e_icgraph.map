@@ -1,0 +1,8 @@
+<map id="ssd1306_display" name="ssd1306_display">
+<area shape="rect" id="node2" href="$structio_1_1oled__display.html#aa9d33da4a0aaa3324e5ea5e703a8ee7e" title="Renders the internal display buffer. " alt="" coords="172,56,328,83"/>
+<area shape="rect" id="node3" href="$structio_1_1oled__display.html#af9c477a20ffe38ac393b18765413f5c6" title="Writes and renders the internal display buffer. " alt="" coords="376,31,537,57"/>
+<area shape="rect" id="node7" href="$structio_1_1oled__display.html#af1924e1aea055ce3ef60e68272dd31e2" title="Clears the display and renders it. " alt="" coords="383,81,531,108"/>
+<area shape="rect" id="node4" href="$classio_1_1menu.html#a5321b7f9157c4882d1eefb7d5092c222" title="Renders the current page to the OLED display. " alt="" coords="585,5,701,32"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="618,56,669,83"/>
+<area shape="rect" id="node5" href="$classio_1_1input__handler.html#a683fa07ffb8bf356800f7e0d5c4abf38" title="Waits for the input thread to finish. " alt="" coords="749,5,899,32"/>
+</map>

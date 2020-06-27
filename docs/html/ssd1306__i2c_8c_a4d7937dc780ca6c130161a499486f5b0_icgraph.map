@@ -1,0 +1,5 @@
+<map id="ssd1306_drawFastHLineInternal" name="ssd1306_drawFastHLineInternal">
+<area shape="rect" id="node2" href="$ssd1306__i2c_8h.html#ae582bbc3a1cddcaba7f1b4691e018643" title="ssd1306_drawFastHLine" alt="" coords="263,5,429,32"/>
+<area shape="rect" id="node4" href="$ssd1306__i2c_8h.html#af7a9662eb3c6e2e706b35785943aff8d" title="ssd1306_drawFastVLine" alt="" coords="263,56,429,83"/>
+<area shape="rect" id="node3" href="$ssd1306__i2c_8h.html#acdd10a209f6d006395aebc2778ea365e" title="ssd1306_fillRect" alt="" coords="477,5,596,32"/>
+</map>

@@ -19,21 +19,50 @@ namespace io {
         static constexpr auto DEBOUNCE_TIME = 50ms;
 
       public:
-        explicit input_handler(io::menu &m);
+        /**
+         *  @brief  Constructor.
+         *  @param  menu  A menu reference.
+         */
+        explicit input_handler(io::menu &menu);
 
+        /**
+         *  @brief  Starts an asynchronous thread for handling input.
+         */
         void start();
 
-        void request_interrupt();
+        /**
+         *  @brief  Notifies the input thread to be stopped.
+         */
+        void request_interrupt() noexcept;
 
-        void wait() const;
+        /**
+         *  @brief  Waits for the input thread to finish.
+         */
+        void wait() const noexcept;
 
+        /**
+         *  @brief  Sets the ready flag for the input thread to determine when
+         *          to wait or wake up itself.
+         *  @param  ready true or false.
+         */
         void ready(bool ready) noexcept;
 
+        /**
+         *  @brief  The condition_variable for the input thread.
+         *  @return condition_variable for input thread.
+         */
         std::condition_variable &cv();
 
+        /**
+         *  @brief  The mutex for the input thread.
+         *  @return   mutex for the input thread.
+         */
         std::mutex &mutex();
 
       private:
+        /**
+         *  @brief  The input thread itself. Handles the input and the LCD Menu.
+         */
         void process_inputs_thread();
 
       private:

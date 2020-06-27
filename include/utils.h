@@ -1,12 +1,14 @@
 #ifndef COVID_PI_UTILS_H
 #define COVID_PI_UTILS_H
 
-#include <rapidjson/document.h>
-
 #include <cstdint>
 #include <limits>
 #include <algorithm>
 #include <array>
+#include <string>
+#include <unordered_map>
+
+#include <rapidjson/document.h>
 
 namespace utils {
     constexpr static std::array const alpha_2_codes{
@@ -68,7 +70,12 @@ namespace utils {
         "ZK", "ZL", "ZM", "ZN", "ZO", "ZP", "ZQ", "ZR", "ZS", "ZT", "ZU", "ZV",
         "ZW", "ZX", "ZY", "ZZ"};
 
-    static auto has_alpha_2_code(std::string &&needle) -> bool {
+    /**
+     *  @brief  Determines whether the given alpha-2-code is valid.
+     *  @param  needle  The country code to be checked. Will be copied and
+     *                  transformed into capital letters.
+     */
+    static auto has_alpha_2_code(std::string needle) -> bool {
         std::transform(std::begin(needle), std::end(needle), std::begin(needle),
                        [](auto &&c) { return std::toupper(c); });
         for (auto const code : alpha_2_codes) {
@@ -79,11 +86,38 @@ namespace utils {
         return false;
     }
 
+    /**
+     *  @brief  Replaces umlauts with their alternative representation.
+     *  @param  str The string to be replaced.
+     */
+    static void replace_umlauts(std::string &str) {
+        std::unordered_map<std::string, std::string> static const umlauts{
+            {"ä", "ae"}, {"ö", "oe"}, {"ü", "ue"}, {"Ä", "Ae"},
+            {"Ö", "Oe"}, {"Ü", "Ue"}, {"ß", "ss"}};
+
+        for (std::size_t i = 0; i < str.size(); ++i) {
+            for (auto const &[k, v] : umlauts) {
+                auto pos = str.find(k);
+                if (pos != std::string::npos) {
+                    str[pos] = v[0];
+                    str[pos + 1] = v[1];
+                }
+            }
+        }
+    }
+
+    /**
+     *  @brief  Returns a C++ value from a Json value.
+     *  @tparam T   The C++ type to be converted into.
+     *  @param  val The Json value.
+     *  @param  default_val A default value to return if the Json value doesn't
+     *                      exist.
+     */
     template <typename T>
-    static auto const json_default_val =
-        [](rapidjson::Value const &val, T const &default_val) {
-            return val.Is<T>() ? val.Get<T>() : default_val;
-        };
+    static auto const json_default_val(rapidjson::Value const &val,
+                                       T const &default_val) {
+        return val.Is<T>() ? val.Get<T>() : default_val;
+    };
 } // namespace utils
 
 namespace io {

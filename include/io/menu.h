@@ -2,13 +2,8 @@
 #define COVID_PI_MENU_H
 
 #include "../json/covid_data.h"
-#include "../utils.h"
-#include "oled_display.h"
 
-#include <algorithm>
-#include <atomic>
 #include <cstdint>
-#include <functional>
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -32,75 +27,50 @@ namespace io {
         using pages_type = std::vector<page_type>;
         using size_type = pages_type::size_type;
 
-        void add_menu(pages_type &&pages) noexcept {
-            pages_ = std::move(pages);
-            render();
-        }
+        /**
+         *  @brief   Adds the menu pages using move sementics.
+         */
+        void add_menu(pages_type &&pages) noexcept;
 
-        /// Renders the current page to the display.
-        /// Thread-Safe: Yes
-        void render() noexcept {
-            auto *const page = current();
-            auto const &loc = page->name;
-            auto const &code = page->code;
-            auto const &confirmed = page->confirmed;
-            auto const &dead = page->dead;
-            auto const &recovered = page->recovered;
+        /**
+         *  @brief Renders the current page to the OLED display.
+         */
+        void render() noexcept;
 
-            // 192 bytes should be enough
-            std::array<char, 192> buffer{};
-            fmt::format_to_n(buffer.data(), buffer.size(),
-                             "Location: {}\n"
-                             "Code: {}\n"
-                             "Cases: {}\n"
-                             "Dead: {}\n"
-                             "Healed: {}",
-                             loc.data(), code.data(), confirmed, dead,
-                             recovered);
-            std::scoped_lock<std::mutex> lk(display_mutex_);
-            oled_display::clear_buffer();
-            oled_display::write(0, MenuRow::ROW7, "*** Page {}/{} ***",
-                                index_ + 1, size());
-            oled_display::display(0, 0, buffer.data());
-        }
+        /**
+         *  @brief  Returns an immutable reference of the menu pages.
+         */
+        [[nodiscard]] pages_type const &pages() const noexcept;
 
-        [[nodiscard]] auto const &pages() const noexcept {
-            return pages_;
-        }
+        /**
+         *  @brief  Returns a mutable reference of the menu pages.
+         */
+        [[nodiscard]] pages_type &pages() noexcept;
 
-        [[nodiscard]] auto &pages() noexcept {
-            return pages_;
-        }
+        /**
+         *  @brief  Sets the current page to the previous one.
+         */
+        void prev() noexcept;
 
-        /// Sets the current page to the previous one.
-        /// Thread-Safe: No
-        void prev() noexcept {
-            index_ == 0 ? (index_ = size() - 1) : (index_--);
-        }
+        /**
+         *  @brief  Sets the current page to the next one.
+         */
+        void next() noexcept;
 
-        /// Sets the current page to the next one.
-        /// Thread-Safe: No
-        void next() noexcept {
-            index_ = (index_ + 1) % size();
-        }
+        /**
+         *  @brief  Returns the total number of pages.
+         */
+        [[nodiscard]] size_type size() const noexcept;
 
-        /// Returns the total number of pages.
-        /// Thread-Safe: No
-        [[nodiscard]] size_type size() const noexcept {
-            return pages_.size();
-        }
+        /**
+         *  @brief  Returns the current immutable page.
+         */
+        [[nodiscard]] covid_data const *current() const noexcept;
 
-        /// Returns the current immutable page.
-        /// Thread-Safe: No
-        [[nodiscard]] covid_data const *current() const noexcept {
-            return pages_[index_].get();
-        }
-
-        /// Returns the current mutable page.
-        /// Thread-Safe: No
-        [[nodiscard]] covid_data *current() noexcept {
-            return pages_[index_].get();
-        }
+        /**
+         *  @brief  Returns the current mutable page.
+         */
+        [[nodiscard]] covid_data *current() noexcept;
 
       private:
         std::mutex display_mutex_;

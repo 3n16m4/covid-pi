@@ -1,0 +1,13 @@
+<map id="io::menu::render" name="io::menu::render">
+<area shape="rect" id="node2" href="$classio_1_1menu.html#a91268478e0e0d42453464bbbafa70cf5" title="Returns the current immutable page. " alt="" coords="190,5,310,32"/>
+<area shape="rect" id="node3" href="$structio_1_1oled__display.html#a551dd0aaaf33d4cf5a545dd71e5cbbbe" title="Clears the internal display buffer. " alt="" coords="176,57,324,98"/>
+<area shape="rect" id="node5" href="$structio_1_1oled__display.html#a7a816938fb19c64ffdb1b74a895eb038" title="Convenient way to format data and write to the display buffer. This function does not allocate any dy..." alt="" coords="383,148,531,175"/>
+<area shape="rect" id="node8" href="$classio_1_1menu.html#abdc991b52a5d00daadceab0f0e5c99a4" title="Returns the total number of pages. " alt="" coords="198,173,302,200"/>
+<area shape="rect" id="node9" href="$structio_1_1oled__display.html#af9c477a20ffe38ac393b18765413f5c6" title="Writes and renders the internal display buffer. " alt="" coords="169,224,331,251"/>
+<area shape="rect" id="node4" href="$ssd1306__i2c_8c.html#a4f4ce98e1364e9461cc7a1e812c3cd97" title="ssd1306_clearDisplay" alt="" coords="381,64,532,91"/>
+<area shape="rect" id="node6" href="$ssd1306__i2c_8c.html#aa731d97ff391eed5c1870dfd4184dc6c" title="ssd1306_drawText" alt="" coords="583,148,715,175"/>
+<area shape="rect" id="node7" href="$ssd1306__i2c_8c.html#aa30bd1afed27a54c67634837aec73693" title="ssd1306_drawChar" alt="" coords="763,148,897,175"/>
+<area shape="rect" id="node10" href="$structio_1_1oled__display.html#aa9d33da4a0aaa3324e5ea5e703a8ee7e" title="Renders the internal display buffer. " alt="" coords="379,224,535,251"/>
+<area shape="rect" id="node11" href="$ssd1306__i2c_8c.html#af34c9d57224961a13f625ea3a774c65a" title="ssd1306_display" alt="" coords="589,224,708,251"/>
+<area shape="rect" id="node12" href="$ssd1306__i2c_8c.html#adf4674c5cf4fb086141d47614cb01319" title="ssd1306_command" alt="" coords="763,224,897,251"/>
+</map>

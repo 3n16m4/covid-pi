@@ -23,6 +23,10 @@ set_project_warnings(project_warnings)
 include(cmake/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
+# enable doxygen
+include(cmake/Doxygen.cmake)
+enable_doxygen()
+
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
 
@@ -45,6 +49,7 @@ set(SOURCE_FILES
         ssd1306_i2c/ssd1306_i2c.h
         ssd1306_i2c/ssd1306_i2c.c
 
+        include/covid_status_handler.h
         include/utils.h
 
         include/io/input_handler.h
@@ -53,6 +58,7 @@ set(SOURCE_FILES
 
         include/json/covid_data.h
 
+        src/covid_status_handler.cpp
         src/io/input_handler.cpp
         src/io/menu.cpp
         src/io/oled_display.cpp
