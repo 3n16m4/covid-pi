@@ -57,6 +57,7 @@ bool covid_status_handler::setup() noexcept {
 }
 
 bool covid_status_handler::request() noexcept {
+    json_data_.clear();
     auto const res = curl_easy_perform(handle_);
     if (res != CURLE_OK) {
         fmt::print(stderr, "curl_easy_perform() failed: {}\n",
