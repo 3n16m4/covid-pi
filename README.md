@@ -22,11 +22,11 @@ Software
 *   Raspberry Pi Cross Compiler https://github.com/raspberrypi/tools
 *   Libraries:
     -   libcurl (https://curl.haxx.se/libcurl/)
-    -   ssd1306 (https://github.com/lexus2k/ssd1306)
-    -   WiringPi http://wiringpi.com/reference/i2c-library/
-    -   cxxopts https://github.com/jarro2783/cxxopts
-    -   rapidjson https://github.com/Tencent/rapidjson
-    -   fmt https://github.com/fmtlib/fmt
+    -   ssd1306 (https://github.com/iliapenev/ssd1306_i2c/)
+    -   WiringPi (http://wiringpi.com/reference/i2c-library/)
+    -   cxxopts (https://github.com/jarro2783/cxxopts/)
+    -   rapidjson (https://github.com/Tencent/rapidjson/)
+    -   fmt (https://github.com/fmtlib/fmt/)
 
 Enable I2C Interface:
 
